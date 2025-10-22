@@ -1,0 +1,11 @@
+Flask
+Flask-Cors
+Flask-SQLAlchemy
+Flask-Migrate
+Flask-WTF
+requests
+beautifulsoup4
+pandas
+numpy
+pytest
+gunicorn
