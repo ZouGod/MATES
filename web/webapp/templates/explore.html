@@ -1,0 +1,14 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}
+MATES Khmer Corpus Platform
+{% endblock %}
+
+{% block content %}
+  {% include "components/dataset.html" %}
+  {% include "components/footer.html" %}
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/filters.js') }}"></script>
+{% endblock %}

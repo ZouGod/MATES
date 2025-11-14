@@ -1,52 +1,73 @@
-<section
-  class="bg-gradient-to-r from-primary-600 to-primary-700 text-white py-16"
->
+<section class="hero bg-gradient-to-r from-blue-600 to-blue-700 text-white py-16">
   <div class="container mx-auto px-4 text-center">
     <h1 class="text-4xl md:text-5xl font-bold mb-4">
       MATES Khmer Language Corpora
     </h1>
-    <p class="text-xl mb-2">
+    <p class="text-xl mb-6">
       Powered by the Multi-Agent Text Extraction System — your gateway to freely
       accessible Khmer-language data.
     </p>
 
-    <div class="bg-white p-2 max-w-3xl mx-auto search-shadow">
-      <div class="flex flex-col md:flex-row">
-        <input
-          type="text"
-          placeholder="Search Khmer corpora..."
-          class="flex-grow p-4 text-gray-800 focus:outline-none"
-        />
-        <select
-          class="p-4 text-gray-700 border-l-0 md:border-l border-gray-300 focus:outline-none"
-        >
-          <option>All Khmer Corpora</option>
-          <option>Modern Khmer Corpus</option>
-          <option>Historical Khmer Texts</option>
-          <option>Khmer News Corpus</option>
-          <option>Khmer Literature</option>
-          <option>Spoken Khmer</option>
-        </select>
+    <!-- Larger Search Form -->
+    <div class="max-w-3xl mx-auto">
+      <div class="flex shadow-md rounded-xl overflow-hidden">
+        <!-- Dropdown Button -->
         <button
-          class="bg-primary-600 text-white p-4 hover:bg-primary-700 transition mt-2 md:mt-0 md:ml-2"
+          id="dropdown-button"
+          data-dropdown-toggle="dropdown"
+          type="button"
+          class="inline-flex items-center shrink-0 z-10 text-gray-800 bg-white border border-gray-300 hover:bg-gray-100 focus:ring-4 focus:ring-blue-300 font-medium text-base px-6 py-4 rounded-s-xl focus:outline-none"
         >
-          <i class="fas fa-search mr-2"></i>Search
+          <svg class="w-5 h-5 mr-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.143 4H4.857A.857.857 0 0 0 4 4.857v4.286c0 .473.384.857.857.857h4.286A.857.857 0 0 0 10 9.143V4.857A.857.857 0 0 0 9.143 4Zm10 0h-4.286a.857.857 0 0 0-.857.857v4.286c0 .473.384.857.857.857h4.286A.857.857 0 0 0 20 9.143V4.857A.857.857 0 0 0 19.143 4Zm-10 10H4.857a.857.857 0 0 0-.857.857v4.286c0 .473.384.857.857.857h4.286a.857.857 0 0 0 .857-.857v-4.286A.857.857 0 0 0 9.143 14Zm10 0h-4.286a.857.857 0 0 0-.857.857v4.286c0 .473.384.857.857.857h4.286a.857.857 0 0 0 .857-.857v-4.286a.857.857 0 0 0-.857-.857Z"/></svg>
+          All Categories
+          <svg class="w-5 h-5 ml-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7"/></svg>
+        </button>
+
+        <!-- Dropdown Menu -->
+        <div id="dropdown" class="z-10 hidden bg-white border border-gray-300 rounded-xl shadow-lg w-48 text-gray-800">
+          <ul class="p-2 text-base font-medium" aria-labelledby="dropdown-button">
+            <li><a href="#" class="block p-2 rounded-md hover:bg-gray-100">All Khmer Corpora</a></li>
+            <li><a href="#" class="block p-2 rounded-md hover:bg-gray-100">Modern Khmer Corpus</a></li>
+            <li><a href="#" class="block p-2 rounded-md hover:bg-gray-100">Historical Khmer Texts</a></li>
+            <li><a href="#" class="block p-2 rounded-md hover:bg-gray-100">Khmer News Corpus</a></li>
+            <li><a href="#" class="block p-2 rounded-md hover:bg-gray-100">Khmer Literature</a></li>
+            <li><a href="#" class="block p-2 rounded-md hover:bg-gray-100">Spoken Khmer</a></li>
+          </ul>
+        </div>
+
+        <!-- Input -->
+        <input
+          type="search"
+          id="search-dropdown"
+          class="flex-grow px-6 py-4 bg-white border-t border-b border-gray-300 text-gray-800 text-base focus:ring-blue-500 focus:border-blue-500 placeholder-gray-500"
+          placeholder="Search Khmer corpora..."
+          required
+        />
+
+        <!-- Search Button -->
+        <button
+          type="button"
+          class="inline-flex items-center text-white bg-blue-600 hover:bg-blue-700 border border-transparent focus:ring-4 focus:ring-blue-300 font-medium text-base px-6 py-4 rounded-e-xl focus:outline-none"
+        >
+          <svg class="w-5 h-5 mr-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="m21 21-3.5-3.5M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"/></svg>
+          Search
         </button>
       </div>
     </div>
 
-    <div class="mt-8 flex flex-wrap justify-center gap-4">
-      <div class="bg-white/20 backdrop-blur-sm px-4 py-2">
+    <!-- Stats -->
+    <div class="mt-10 flex flex-wrap justify-center gap-4">
+      <div class="bg-white/20 backdrop-blur-sm px-6 py-3 rounded-full">
         <span class="font-bold">25M+</span> Khmer Words
       </div>
-      <div class="bg-white/20 backdrop-blur-sm px-4 py-2">
+      <div class="bg-white/20 backdrop-blur-sm px-6 py-3 rounded-full">
         <span class="font-bold">8</span> Corpora
       </div>
-      <div class="bg-white/20 backdrop-blur-sm px-4 py-2">
+      <div class="bg-white/20 backdrop-blur-sm px-6 py-3 rounded-full">
         <span class="font-bold">5</span> Text Types
       </div>
-      <div class="bg-white/20 backdrop-blur-sm px-4 py-2">
-        <span class="font-bold">1990-2023</span> Time Span
+      <div class="bg-white/20 backdrop-blur-sm px-6 py-3 rounded-full">
+        <span class="font-bold">2020–2025</span> Time Span
       </div>
     </div>
   </div>
