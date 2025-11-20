@@ -1,79 +1,153 @@
 <section class="py-16 bg-gray-50 grid grid-cols-1 md:grid-cols-3 gap-8 px-6">
-  <!-- Sidebar Filter -->
-  <aside class="bg-white rounded-2xl shadow-sm border border-blue-100 space-y-4 h-fit">
-    <div class="border-b pb-4 flex justify-between items-center px-6 pt-4">
-      <h2 class="font-semibold text-gray-700">Filter</h2>
-      <button id="clear-filters" class="text-blue-600 text-sm hover:underline">
-        Clear
-      </button>
+<!-- Sidebar Filter -->
+<aside class="bg-white rounded-2xl shadow-sm border border-blue-100 space-y-8 h-fit">
+
+  <!-- Header -->
+  <div class="border-b pb-4 flex justify-between items-center px-6 pt-4">
+    <h2 class="font-semibold text-gray-700">Filter</h2>
+    <button id="clear-filters" class="text-blue-600 text-sm hover:underline">
+      Clear
+    </button>
+  </div>
+
+  <!-- Category -->
+  <div class="px-6 space-y-3">
+    <h3 class="font-semibold text-gray-700">Category</h3>
+
+    <input
+      type="text"
+      id="category-search"
+      placeholder="Search category..."
+      class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500"
+    />
+
+    <div id="category-list" class="space-y-2 text-sm text-gray-600 max-h-48 overflow-y-auto">
+      <label class="flex items-center">
+        <input id="cat1" type="checkbox" class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-0 focus:ring-offset-0 focus:outline-none">
+        <span class="ml-2">Public Finance</span>
+      </label>
+
+      <label class="flex items-center">
+        <input id="cat2" type="checkbox" class="w-4 h-4 text-blue-600 border-gray-300 rounded">
+        <span class="ml-2">Demographic and Social Indicators</span>
+      </label>
+
+      <label class="flex items-center">
+        <input id="cat3" type="checkbox" class="w-4 h-4 text-blue-600 border-gray-300 rounded">
+        <span class="ml-2">International Trade</span>
+      </label>
+
+      <label class="flex items-center">
+        <input id="cat4" type="checkbox" class="w-4 h-4 text-blue-600 border-gray-300 rounded">
+        <span class="ml-2">Financial Markets</span>
+      </label>
+
+      <label class="flex items-center">
+        <input id="cat5" type="checkbox" class="w-4 h-4 text-blue-600 border-gray-300 rounded">
+        <span class="ml-2">Macroeconomics</span>
+      </label>
     </div>
+  </div>
 
-    <!-- Category -->
-    <div class="px-6">
-      <h3 class="font-semibold text-gray-700 mb-3">Category</h3>
-      <input
-        type="text"
-        id="category-search"
-        placeholder="Search category..."
-        class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm mb-3 focus:ring-2 focus:ring-blue-500"
-      />
+  <!-- Tags -->
+  <div class="px-6 space-y-3">
+    <h3 class="font-semibold text-gray-700">Tags</h3>
 
-      <div id="category-list" class="space-y-2 text-sm text-gray-600 max-h-48 overflow-y-auto">
-        <div class="flex items-center">
-          <input id="cat1" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-0 focus:ring-offset-0 focus:outline-none">
-          <label for="cat1" class="ms-2 text-sm font-medium text-gray-700">Public Finance</label>
-        </div>
-        <div class="flex items-center">
-          <input id="cat2" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-0 focus:ring-offset-0 focus:outline-none">
-          <label for="cat2" class="ms-2 text-sm font-medium text-gray-700">Demographic and Social Indicators</label>
-        </div>
-        <div class="flex items-center">
-          <input id="cat3" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-0 focus:ring-offset-0 focus:outline-none">
-          <label for="cat3" class="ms-2 text-sm font-medium text-gray-700">International Trade</label>
-        </div>
-        <div class="flex items-center">
-          <input id="cat4" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-0 focus:ring-offset-0 focus:outline-none">
-          <label for="cat4" class="ms-2 text-sm font-medium text-gray-700">Financial Markets</label>
-        </div>
-        <div class="flex items-center">
-          <input id="cat5" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-0 focus:ring-offset-0 focus:outline-none">
-          <label for="cat5" class="ms-2 text-sm font-medium text-gray-700">Macroeconomics</label>
-        </div>
+    <input
+      type="text"
+      id="tag-search"
+      placeholder="Search tag..."
+      class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500"
+    />
+
+    <div id="tag-list" class="space-y-2 text-sm text-gray-600 max-h-48 overflow-y-auto">
+      <label class="flex items-center">
+        <input id="tag1" type="checkbox" class="w-4 h-4 text-blue-600 border-gray-300 rounded">
+        <span class="ml-2">National Institute of Statistics</span>
+      </label>
+
+      <label class="flex items-center">
+        <input id="tag2" type="checkbox" class="w-4 h-4 text-blue-600 border-gray-300 rounded">
+        <span class="ml-2">Ministry of Economy and Finance</span>
+      </label>
+
+      <label class="flex items-center">
+        <input id="tag3" type="checkbox" class="w-4 h-4 text-blue-600 border-gray-300 rounded">
+        <span class="ml-2">National Bank of Cambodia</span>
+      </label>
+    </div>
+  </div>
+
+  <!-- Sources -->
+  <div class="px-6 space-y-3">
+    <h3 class="font-semibold text-gray-700">Sources</h3>
+
+    <input
+      type="text"
+      id="source-search"
+      placeholder="Search sources..."
+      class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500"
+    />
+
+    <div id="source-list" class="space-y-2 text-sm text-gray-600 max-h-48 overflow-y-auto">
+      <label class="flex items-center">
+        <input id="src1" type="checkbox" class="w-4 h-4 text-blue-600 border-gray-300 rounded">
+        <span class="ml-2">National Institute of Statistics</span>
+      </label>
+
+      <label class="flex items-center">
+        <input id="src2" type="checkbox" class="w-4 h-4 text-blue-600 border-gray-300 rounded">
+        <span class="ml-2">Ministry of Economy and Finance</span>
+      </label>
+
+      <label class="flex items-center">
+        <input id="src3" type="checkbox" class="w-4 h-4 text-blue-600 border-gray-300 rounded">
+        <span class="ml-2">National Bank of Cambodia</span>
+      </label>
+    </div>
+  </div>
+
+  <!-- Publication Date -->
+  <div class="px-6 pb-6 space-y-3">
+    <h3 class="font-semibold text-gray-700">Publication Date</h3>
+
+    <div class="space-y-3">
+      <div>
+        <label class="text-sm text-gray-600">Start Date</label>
+        <input
+          type="date"
+          id="start-date"
+          class="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
+
+      <div>
+        <label class="text-sm text-gray-600">End Date</label>
+        <input
+          type="date"
+          id="end-date"
+          class="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500"
+        />
       </div>
     </div>
+  </div>
+</aside>
 
-    <!-- Organization -->
-    <div class="px-6 pb-6">
-      <h3 class="font-semibold text-gray-700 mb-3">Organization</h3>
-      <input
-        type="text"
-        id="org-search"
-        placeholder="Search organization..."
-        class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm mb-3 focus:ring-2 focus:ring-blue-500"
-      />
-      <div id="org-list" class="space-y-2 text-sm text-gray-600 max-h-48 overflow-y-auto">
-        <div class="flex items-center">
-          <input id="org1" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-0 focus:ring-offset-0 focus:outline-none">
-          <label for="org1" class="ms-2 text-sm font-medium text-gray-700">National Institute of Statistics</label>
-        </div>
-        <div class="flex items-center">
-          <input id="org2" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-0 focus:ring-offset-0 focus:outline-none">
-          <label for="org2" class="ms-2 text-sm font-medium text-gray-700">Ministry of Economy and Finance</label>
-        </div>
-        <div class="flex items-center">
-          <input id="org3" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-0 focus:ring-offset-0 focus:outline-none">
-          <label for="org3" class="ms-2 text-sm font-medium text-gray-700">National Bank of Cambodia</label>
-        </div>
-      </div>
-    </div>
-  </aside>
 
   <!-- Main Content -->
   <div class="col-span-2">
     <div class="sort flex justify-between items-center mb-6">
-      <p class="text-gray-600">685 Articles</p>
-      <div class="sort flex flex-wrap items-center gap-2">
-         <select class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500">
+      <p id="count-articals" class="text-gray-600"></p>
+
+      <div class="sort-control flex flex-wrap items-center gap-2">
+    <button type="button"
+      class="text-white bg-green-600 hover:bg-green-700 
+            border border-transparent 
+            shadow-sm font-medium leading-5 
+            rounded-md text-sm px-4 py-2.5">
+      Export
+    </button>
+        <select class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500">
           <option>Most Relevant</option>
           <option>Most Recent</option>
           <option>Most Downloaded</option>
@@ -89,7 +163,7 @@
     </div>
 
     <!-- Dataset Cards -->
-    <div class="grid sm:grid-cols-1 md:grid-cols-2 gap-6">
+    <div id="cards" class="grid sm:grid-cols-1 md:grid-cols-2 gap-6">
       <!-- Card 1 -->
       <article class="bg-white rounded-2xl border border-blue-100 shadow-sm p-6 hover:shadow-md transition">
         <p class="text-xs font-semibold text-blue-700 uppercase mb-1">
@@ -150,5 +224,63 @@
         </div>
       </article>
     </div>
+  
+<div class="flex justify-center w-full">
+<nav aria-label="Page navigation" class="flex items-center gap-4 mt-6">
+
+  <ul class="flex -space-x-px text-sm">
+
+    <!-- Previous -->
+    <li>
+      <a href="#"
+         class="flex items-center justify-center bg-gray-100 text-gray-700 border border-gray-300 
+                hover:bg-gray-200 rounded-l-lg px-3 h-9">
+        Previous
+      </a>
+    </li>
+
+    <!-- Pages -->
+    <li><a href="#" class="flex items-center justify-center bg-gray-100 border border-gray-300 hover:bg-gray-200 text-gray-700 w-9 h-9">1</a></li>
+    <li><a href="#" class="flex items-center justify-center bg-gray-100 border border-gray-300 hover:bg-gray-200 text-gray-700 w-9 h-9">2</a></li>
+
+    <!-- Active page -->
+    <li>
+      <a href="#"
+         aria-current="page"
+         class="flex items-center justify-center bg-blue-600 text-white border border-blue-600 font-medium w-9 h-9">
+        3
+      </a>
+    </li>
+
+    <li><a href="#" class="flex items-center justify-center bg-gray-100 border border-gray-300 hover:bg-gray-200 text-gray-700 w-9 h-9">4</a></li>
+    <li><a href="#" class="flex items-center justify-center bg-gray-100 border border-gray-300 hover:bg-gray-200 text-gray-700 w-9 h-9">5</a></li>
+
+    <!-- Next -->
+    <li>
+      <a href="#"
+         class="flex items-center justify-center bg-gray-100 text-gray-700 border border-gray-300 
+                hover:bg-gray-200 rounded-r-lg px-3 h-9">
+        Next
+      </a>
+    </li>
+
+  </ul>
+
+  <!-- Per page dropdown -->
+  <form class="w-32">
+    <select
+      class="block w-full px-3 py-2 bg-gray-100 border border-gray-300 
+             text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500">
+      <option selected>10 per page</option>
+      <option value="25">25 per page</option>
+      <option value="50">50 per page</option>
+      <option value="100">100 per page</option>
+    </select>
+  </form>
+
+</nav>
+</div>
+
+
   </div>
 </section>

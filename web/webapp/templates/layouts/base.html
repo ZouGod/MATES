@@ -1,36 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <title>
       {% block title %}MATES | Khmer Corpus Linguistics Platform{% endblock %}
     </title>
-    <!-- Add Flowbite CSS before Tailwind -->
-    <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.0.0/flowbite.min.css"
-      rel="stylesheet"
-    />
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    />
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
 
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
+    <!-- Google Fonts (Inter) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- TailwindCSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Tailwind Custom Config -->
     <script>
       tailwind.config = {
         theme: {
@@ -58,25 +42,35 @@
         },
       };
     </script>
-    <style>
-      .search-shadow {
-        box-shadow: 0 10px 25px -5px rgba(245, 158, 11, 0.2);
-      }
-      .corpus-card:hover {
-        transform: translateY(-5px);
-        transition: all 0.3s ease;
-      }
-      .khmer-text {
-        font-family: "Khmer OS", "Angkor", cursive;
-      }
-    </style>
+
+    <!-- Flowbite 4.0.1 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/flowbite@4.0.1/dist/flowbite.min.css" rel="stylesheet" />
+
+
+    <!-- FontAwesome -->
+    <link 
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- Local CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
     {% block head %}{% endblock %}
-  </head>
-  <body class="bg-gray-50 font-sans">
+</head>
+
+<body class="bg-gray-50 font-sans">
+
     {% include "components/header.html" %}
-    <main>{% block content %}{% endblock %}</main>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.0.0/flowbite.min.js"></script>
+
+    <main>
+      {% block content %}{% endblock %}
+    </main>
+
+    <!-- Flowbite 4.0.1 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/flowbite@4.0.1/dist/flowbite.min.js"></script>
 
     {% block scripts %}{% endblock %}
-  </body>
+</body>
 </html>
