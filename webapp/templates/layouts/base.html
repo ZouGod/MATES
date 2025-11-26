@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}MATES | Khmer Corpus Linguistics Platform{% endblock %}</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Flowbite CSS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.0.0/flowbite.min.css" rel="stylesheet" />
+
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <!-- Google Fonts (Inter) -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+  <!-- Tailwind Config -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              50: "#fef7e0",
+              100: "#feefc3",
+              500: "#f59e0b",
+              600: "#d97706",
+              700: "#b45309",
+            },
+            khmer: {
+              50: "#f0f9ff",
+              100: "#e0f2fe",
+              500: "#0ea5e9",
+              600: "#0284c7",
+              700: "#0369a1",
+            },
+          },
+          fontFamily: {
+            sans: ["Inter", "sans-serif"],
+            khmer: ["Khmer OS", "Angkor", "cursive"],
+          },
+        },
+      },
+    };
+  </script>
+
+  <!-- Custom Styles -->
+  <style>
+    .search-shadow {
+      box-shadow: 0 10px 25px -5px rgba(245, 158, 11, 0.2);
+    }
+
+    .corpus-card:hover {
+      transform: translateY(-5px);
+      transition: all 0.3s ease;
+    }
+
+    .khmer-text {
+      font-family: "Khmer OS", "Angkor", cursive;
+    }
+  </style>
+
+  {% block head %}{% endblock %}
+</head>
+
+<body class="bg-gray-50 font-sans">
+  <!-- Header Navigation -->
+  {% include "components/header.html" %}
+
+  <!-- Main Content -->
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Flowbite JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.0.0/flowbite.min.js"></script>
+
+  <!-- Page-specific Scripts -->
+  {% block scripts %}{% endblock %}
+</body>
+
+</html>

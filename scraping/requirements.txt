@@ -1,0 +1,5 @@
+crawl4ai
+beautifulsoup4
+pandas
+playwright
+requests
