@@ -61,14 +61,25 @@ function collectFilters() {
 function renderArticles(data) {
   const container = el("#cards");
   const countEl = el("#count-articals");
+  const countWordsEl = el("#count-words");
   const pageInfo = el("#page-info");
 
   if (!data || !container) return;
 
   lastApiResponse = data;
 
+  // Update article count
   if (countEl) {
     countEl.textContent = `${data.total || 0} Articles`;
+  }
+
+  // Update word count
+  if (countWordsEl && data.articles && data.articles.length > 0) {
+    const totalWords = data.articles.reduce((sum, article) => {
+      return sum + (article.character_count || 0);
+    }, 0) / 5; // Divide by 5 for word estimate
+    
+    countWordsEl.textContent = `${Math.round(totalWords).toLocaleString()} Words`;
   }
 
   if (pageInfo) {
@@ -170,6 +181,7 @@ async function loadArticles() {
     renderArticles(data);
   }
 }
+
 
 /* ======================================================
    EXPORT FILTERED DATA
