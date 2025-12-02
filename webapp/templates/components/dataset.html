@@ -1,0 +1,148 @@
+<section class="py-16 bg-gray-50 grid grid-cols-1 md:grid-cols-3 gap-8 px-6">
+  <!-- Sidebar Filter -->
+  <aside class="bg-white rounded-2xl shadow-sm border border-blue-100 space-y-8 h-fit">
+    <!-- Header -->
+    <div class="border-b pb-4 flex justify-between items-center px-6 pt-4">
+      <h2 class="font-semibold text-gray-700">Filter</h2>
+      <button id="clear-filters" class="text-blue-600 text-sm hover:underline">
+        Clear
+      </button>
+    </div>
+
+    <!-- Category -->
+    <div class="px-6 space-y-3">
+      <h3 class="font-semibold text-gray-700">Category</h3>
+      <input
+        type="text"
+        id="category-search"
+        placeholder="Search category..."
+        class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500"
+      />
+      <div id="category-list" class="space-y-2 text-sm text-gray-600 max-h-48 overflow-y-auto">
+        <!-- Populated by JavaScript -->
+      </div>
+    </div>
+
+    <!-- Tags -->
+    <div class="px-6 space-y-3">
+      <h3 class="font-semibold text-gray-700">Tags</h3>
+      <input
+        type="text"
+        id="tag-search"
+        placeholder="Search tag..."
+        class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500"
+      />
+      <div id="tag-list" class="space-y-2 text-sm text-gray-600 max-h-48 overflow-y-auto">
+        <!-- Populated by JavaScript -->
+      </div>
+    </div>
+
+    <!-- Sources -->
+    <div class="px-6 space-y-3">
+      <h3 class="font-semibold text-gray-700">Sources</h3>
+      <input
+        type="text"
+        id="source-search"
+        placeholder="Search sources..."
+        class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500"
+      />
+      <div id="source-list" class="space-y-2 text-sm text-gray-600 max-h-48 overflow-y-auto">
+        <!-- Populated by JavaScript -->
+      </div>
+    </div>
+
+    <!-- Publication Date -->
+    <div class="px-6 pb-6 space-y-3">
+      <h3 class="font-semibold text-gray-700">Publication Date</h3>
+      <div class="space-y-3">
+        <div>
+          <label class="text-sm text-gray-600">Start Date</label>
+          <input
+            type="date"
+            id="start-date"
+            class="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+        <div>
+          <label class="text-sm text-gray-600">End Date</label>
+          <input
+            type="date"
+            id="end-date"
+            class="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <div class="col-span-2">
+    <div class="sort flex justify-between items-center mb-6">
+      <div class="flex gap-4">
+        <p id="count-articals" class="text-gray-600">0 Articles</p>
+        <p id="count-words" class="text-gray-600">0 Words</p>
+      </div>
+      <div class="sort-control flex flex-wrap items-center gap-2">
+        <button 
+          id="export-btn"
+          type="button"
+          class="text-white bg-green-600 hover:bg-green-700 border border-transparent shadow-sm font-medium leading-5 rounded-md text-sm px-4 py-2.5 transition">
+          Export
+        </button>
+
+        <select 
+  id="sort-select"
+  class="border border-gray-300 rounded-md px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500">
+  <option value="newest">Most Recent</option>
+  <option value="oldest">Oldest First</option>
+  <option value="relevant">Most Relevant</option>
+</select>
+      </div>
+    </div>
+
+    <!-- Dataset Cards -->
+    <div id="cards" class="grid sm:grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- Populated by JavaScript -->
+    </div>
+
+    <!-- Pagination -->
+    <div class="flex justify-center w-full">
+      <nav aria-label="Page navigation" class="flex items-center gap-4 mt-6">
+        <ul class="flex -space-x-px text-sm">
+          <li>
+            <a 
+              href="#"
+              id="prev-page"
+              class="flex items-center justify-center bg-gray-100 text-gray-700 border border-gray-300 hover:bg-gray-200 rounded-l-lg px-3 h-9">
+              Previous
+            </a>
+          </li>
+          <li>
+            <span id="page-info" class="flex items-center justify-center bg-gray-100 text-gray-700 border border-gray-300 px-3 h-9 text-xs">
+              Page 1
+            </span>
+          </li>
+          <li>
+            <a 
+              href="#"
+              id="next-page"
+              class="flex items-center justify-center bg-gray-100 text-gray-700 border border-gray-300 hover:bg-gray-200 rounded-r-lg px-3 h-9">
+              Next
+            </a>
+          </li>
+        </ul>
+
+        <form class="w-32">
+          <select
+            id="per-page"
+            class="block w-full px-3 py-2 bg-gray-100 border border-gray-300 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500">
+            <option value="10">10 per page</option>
+            <option value="25">25 per page</option>
+            <option value="50">50 per page</option>
+            <option value="100">100 per page</option>
+          </select>
+        </form>
+      </nav>
+    </div>
+  </div>
+</section>
