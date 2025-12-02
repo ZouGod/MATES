@@ -1,11 +1,17 @@
 import os
+from dotenv import load_dotenv
+
+# Load .env file
+load_dotenv()
 
 class Config:
-    # Use DATABASE_URL env var or fallback to local sqlite for dev convenience
-    SQLALCHEMY_DATABASE_URI = os.getenv(
-        "DATABASE_URL",
-        "postgresql://neondb_owner:npg_X0N3vFLwAfEe@ep-fancy-dream-a1a6pcdi-pooler.ap-southeast-1.aws.neon.tech/mates?sslmode=require&channel_binding=require"
-    )
+    """Flask configuration from environment variables"""
+    # Read DATABASE_URL directly from .env
+    SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SQLALCHEMY_ECHO = False
     JSON_SORT_KEYS = False
-    ITEMS_PER_PAGE = int(os.getenv("ITEMS_PER_PAGE", 20))
+    
+    # Validate database URL is set
+    if not SQLALCHEMY_DATABASE_URI:
+        raise ValueError("❌ DATABASE_URL not found in .env file!")
