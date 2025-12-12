@@ -98,8 +98,8 @@ def get_articles():
     page = _int(request.args.get("page")) or 1
     per_page = _int(request.args.get("per_page")) or 20
 
-    category = _int(request.args.get("category"))
-    source = _int(request.args.get("source"))
+    category_param = request.args.get("category")
+    source_param = request.args.get("source")
     tag_param = request.args.get("tag")
     start = request.args.get("start")
     end = request.args.get("end")
@@ -110,11 +110,31 @@ def get_articles():
     query = Article.query
 
     # ---------- Filters ----------
-    if category:
-        query = query.filter(Article.category_id == category)
+    # Handle multiple categories (comma-separated)
+    if category_param:
+        # Parse comma-separated category IDs
+        if ',' in category_param:
+            category_ids = [int(x) for x in category_param.split(",") if x.isdigit()]
+            if category_ids:
+                query = query.filter(Article.category_id.in_(category_ids))
+        else:
+            # Single category
+            category = _int(category_param)
+            if category:
+                query = query.filter(Article.category_id == category)
 
-    if source:
-        query = query.filter(Article.source_id == source)
+    # Handle multiple sources (comma-separated)
+    if source_param:
+        # Parse comma-separated source IDs
+        if ',' in source_param:
+            source_ids = [int(x) for x in source_param.split(",") if x.isdigit()]
+            if source_ids:
+                query = query.filter(Article.source_id.in_(source_ids))
+        else:
+            # Single source
+            source = _int(source_param)
+            if source:
+                query = query.filter(Article.source_id == source)
 
     if tag_param:
         tag_ids = [int(x) for x in tag_param.split(",") if x.isdigit()]
@@ -156,12 +176,27 @@ def get_articles():
     )
     
     # Apply the same filters as the main query
-    # We need to manually apply filters since we can't use query.whereclause directly
-    if category:
-        aggregate_query = aggregate_query.filter(Article.category_id == category)
+    if category_param:
+        # Handle multiple categories for aggregate query
+        if ',' in category_param:
+            category_ids = [int(x) for x in category_param.split(",") if x.isdigit()]
+            if category_ids:
+                aggregate_query = aggregate_query.filter(Article.category_id.in_(category_ids))
+        else:
+            category = _int(category_param)
+            if category:
+                aggregate_query = aggregate_query.filter(Article.category_id == category)
     
-    if source:
-        aggregate_query = aggregate_query.filter(Article.source_id == source)
+    if source_param:
+        # Handle multiple sources for aggregate query
+        if ',' in source_param:
+            source_ids = [int(x) for x in source_param.split(",") if x.isdigit()]
+            if source_ids:
+                aggregate_query = aggregate_query.filter(Article.source_id.in_(source_ids))
+        else:
+            source = _int(source_param)
+            if source:
+                aggregate_query = aggregate_query.filter(Article.source_id == source)
     
     if start:
         try:

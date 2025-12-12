@@ -138,9 +138,7 @@ async function renderCategories(categories) {
           <h3 class="text-xl font-bold text-gray-800">
             ${category.category_name}
           </h3>
-          <span class="${badgeColor} text-xs font-medium px-2.5 py-0.5 rounded-full">
-            ${badgeType}
-          </span>
+        
         </div>
         
         <p class="text-gray-600 mb-6">
@@ -197,3 +195,7 @@ function showNoData() {
 
 // Load categories when page loads
 document.addEventListener('DOMContentLoaded', loadCategories);
+
+//  <span class="${badgeColor} text-xs font-medium px-2.5 py-0.5 rounded-full">
+//             ${badgeType}
+//           </span>

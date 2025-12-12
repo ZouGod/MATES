@@ -46,14 +46,23 @@ const SOURCES_TO_SHOW_INITIALLY = 6;
 function collectFilters() {
   const params = new URLSearchParams();
 
+  // Get all checked categories
   const cats = els("#category-list input:checked").map(cb => cb.value).filter(v => v);
-  if (cats.length > 0) params.append("category", cats[0]);
+  if (cats.length > 0) {
+    params.append("category", cats.join(","));
+  }
 
+  // Get all checked tags
   const tags = els("#tag-list input:checked").map(cb => cb.value).filter(v => v);
-  if (tags.length > 0) params.append("tag", tags.join(","));
+  if (tags.length > 0) {
+    params.append("tag", tags.join(","));
+  }
 
+  // Get all checked sources
   const sources = els("#source-list input:checked").map(cb => cb.value).filter(v => v);
-  if (sources.length > 0) params.append("source", sources[0]);
+  if (sources.length > 0) {
+    params.append("source", sources.join(","));
+  }
 
   const startDate = el("#start-date")?.value;
   const endDate = el("#end-date")?.value;
