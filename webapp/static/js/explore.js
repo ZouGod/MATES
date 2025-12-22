@@ -21,6 +21,22 @@ async function fetchJSON(url) {
 }
 
 /* ======================================================
+   URL PARAMETER HANDLING
+====================================================== */
+function getUrlParameter(param) {
+  const urlParams = new URLSearchParams(window.location.search);
+  return urlParams.get(param);
+}
+
+function applyInitialCategoryFilter() {
+  const categoryParam = getUrlParameter("category");
+  if (categoryParam) {
+    initialCategoryFromUrl = categoryParam;
+    console.log("Found category parameter in URL:", initialCategoryFromUrl);
+  }
+}
+
+/* ======================================================
    STATE MANAGEMENT
 ====================================================== */
 let currentPage = 1;
@@ -30,6 +46,7 @@ let lastApiResponse = null;
 let allCategories = [];
 let showAllCategories = false;
 const CATEGORIES_TO_SHOW_INITIALLY = 6;
+let initialCategoryFromUrl = null;
 
 let allTags = [];
 let currentTagPage = 1;
@@ -100,7 +117,7 @@ function renderArticles(data) {
 
   // Update article count
   if (countEl) {
-    countEl.textContent = `${data.total || 0} Articles`;
+    countEl.textContent = `${formatNumber(data.total) || 0} Articles`;
   }
 
   // Update word count - use the total_words from API response
@@ -141,14 +158,16 @@ function renderArticles(data) {
       <h3 class="font-semibold text-gray-800 mb-2 line-clamp-2">
         ${a.title}
       </h3>
+      <!--
       <p class="text-sm text-gray-700 mb-3 line-clamp-2">
         ${preview}
       </p>
+      -->
       <p class="text-sm text-gray-600 mb-3">${sourceName}</p>
       <div class="flex justify-between items-center text-sm text-gray-500 mt-4">
         <div class="flex flex-col space-y-1">
-          <span>📅 ${a.publication_date || "N/A"}</span>
-          <span>🔤 ${formattedWordCount} words</span>
+          <span><i class="fas fa-calendar mr-1"></i> ${a.publication_date || "N/A"}</span>
+          <span><i class="fas fa-file-word mr-1"></i>  ${formattedWordCount} words</span>
         </div>
         <a
           href="${sourceUrl}"
@@ -333,8 +352,9 @@ function renderCategoryList() {
     const label = document.createElement("label");
     label.className = "flex items-center cursor-pointer hover:bg-gray-50 p-2 rounded";
 
-    // Check if this category was previously checked
-    const isChecked = currentlyCheckedIds.includes(cat.category_id.toString());
+    // Check if this category was previously checked OR if it matches URL parameter
+    const isChecked = currentlyCheckedIds.includes(cat.category_id.toString()) 
+      || (initialCategoryFromUrl && cat.category_id.toString() === initialCategoryFromUrl);
     
     label.innerHTML = `
       <input 
@@ -750,7 +770,9 @@ function setupClearButton() {
     
     currentPage = 1;
     currentSort = "newest";
-    el("#sort-select").value = "newest";
+    const sortLabel = el("#sort-label");
+    if (sortLabel) sortLabel.textContent = "Most Recent";
+
     
     // Reset category show/hide state
     showAllCategories = false;
@@ -776,52 +798,151 @@ function setupClearButton() {
 }
 
 /* ======================================================
-   SORT HANDLER
+   DROPDOWN HANDLING - SIMPLE WORKING VERSION
 ====================================================== */
-function setupSort() {
-  const sortSelect = el("#sort-select");
-  if (!sortSelect) return;
-
-  sortSelect.addEventListener("change", e => {
-    currentSort = e.target.value;
-    currentPage = 1;
-    loadArticles();
+function setupSortDropdown() {
+  console.log("Setting up dropdowns...");
+  
+  const sortLabel = el("#sort-label");
+  const sortDropdown = el("#sortDropdown");
+  const sortBtn = el("#sortDropdownButton");
+  const exportDropdown = el("#exportDropdown");
+  const exportBtn = el("#exportDropdownButton");
+  
+  // Check if elements exist
+  console.log("Elements:", {
+    sortBtn: !!sortBtn,
+    sortDropdown: !!sortDropdown,
+    exportBtn: !!exportBtn,
+    exportDropdown: !!exportDropdown
   });
-}
-
-/* ======================================================
-   EXPORT HANDLER
-====================================================== */
-function setupExport() {
-  const exportBtn = el("#export-btn");
-  if (!exportBtn) return;
-
-  exportBtn.addEventListener("click", () => {
-    const menu = document.createElement("div");
-    menu.className = "absolute bg-white border border-gray-300 rounded shadow-lg z-50 mt-2";
-    menu.innerHTML = `
-      <button id="export-json" class="block w-full text-left px-4 py-2 hover:bg-gray-100">Export as JSON</button>
-      <button id="export-csv" class="block w-full text-left px-4 py-2 hover:bg-gray-100 border-t">Export as CSV</button>
-    `;
-    
-    exportBtn.parentElement.appendChild(menu);
-
-    el("#export-json").addEventListener("click", () => {
-      exportData("json");
-      menu.remove();
-    });
-
-    el("#export-csv").addEventListener("click", () => {
-      exportData("csv");
-      menu.remove();
-    });
-
-    document.addEventListener("click", e => {
-      if (!exportBtn.contains(e.target) && !menu.contains(e.target)) {
-        menu.remove();
+  
+  // Sort dropdown
+  if (sortBtn) {
+    sortBtn.addEventListener("click", function(e) {
+      console.log("Sort button clicked!");
+      e.stopPropagation();
+      e.preventDefault();
+      
+      // Close export dropdown
+      if (exportDropdown) {
+        exportDropdown.classList.add("hidden");
       }
-    }, { once: true });
+      
+      // Toggle sort dropdown
+      if (sortDropdown) {
+        const isHidden = sortDropdown.classList.contains("hidden");
+        console.log("Sort dropdown is hidden?", isHidden);
+        
+        // Position dropdown correctly
+        if (isHidden) {
+          sortDropdown.style.position = "absolute";
+          sortDropdown.style.top = "100%";
+          sortDropdown.style.left = "0";
+          sortDropdown.style.zIndex = "9999";
+        }
+        
+        sortDropdown.classList.toggle("hidden");
+      }
+    });
+  }
+  
+  // Export dropdown
+  if (exportBtn) {
+    exportBtn.addEventListener("click", function(e) {
+      console.log("Export button clicked!");
+      e.stopPropagation();
+      e.preventDefault();
+      
+      // Close sort dropdown
+      if (sortDropdown) {
+        sortDropdown.classList.add("hidden");
+      }
+      
+      // Toggle export dropdown
+      if (exportDropdown) {
+        const isHidden = exportDropdown.classList.contains("hidden");
+        console.log("Export dropdown is hidden?", isHidden);
+        
+        // Position dropdown correctly
+        if (isHidden) {
+          exportDropdown.style.position = "absolute";
+          exportDropdown.style.top = "100%";
+          exportDropdown.style.left = "0";
+          exportDropdown.style.zIndex = "9999";
+        }
+        
+        exportDropdown.classList.toggle("hidden");
+      }
+    });
+  }
+  
+  // Handle sort options
+  if (sortDropdown) {
+    sortDropdown.querySelectorAll("button[data-sort]").forEach(btn => {
+      btn.addEventListener("click", function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        currentSort = this.dataset.sort;
+        currentPage = 1;
+        
+        if (sortLabel) {
+          sortLabel.textContent = this.textContent.trim();
+        }
+        
+        sortDropdown.classList.add("hidden");
+        loadArticles();
+      });
+    });
+  }
+  
+  // Handle export options
+  if (exportDropdown) {
+    exportDropdown.querySelectorAll("button[data-export]").forEach(btn => {
+      btn.addEventListener("click", function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const type = this.dataset.export;
+        exportData(type === "excel" ? "csv" : type);
+        exportDropdown.classList.add("hidden");
+      });
+    });
+  }
+  
+  // Close dropdowns when clicking anywhere on page
+  document.addEventListener("click", function(e) {
+    // Check if click is inside sort dropdown or button
+    const isSortClick = sortBtn?.contains(e.target) || sortDropdown?.contains(e.target);
+    
+    // Check if click is inside export dropdown or button
+    const isExportClick = exportBtn?.contains(e.target) || exportDropdown?.contains(e.target);
+    
+    // Only close if click is outside both dropdown areas
+    if (!isSortClick && sortDropdown) {
+      sortDropdown.classList.add("hidden");
+    }
+    
+    if (!isExportClick && exportDropdown) {
+      exportDropdown.classList.add("hidden");
+    }
   });
+  
+  // Prevent dropdowns from closing when clicking inside them
+  if (sortDropdown) {
+    sortDropdown.addEventListener("click", function(e) {
+      e.stopPropagation();
+    });
+  }
+  
+  if (exportDropdown) {
+    exportDropdown.addEventListener("click", function(e) {
+      e.stopPropagation();
+    });
+  }
+  
+  console.log("Dropdown setup complete!");
 }
 
 /* ======================================================
@@ -844,16 +965,18 @@ function setupPerPage() {
 document.addEventListener("DOMContentLoaded", async () => {
   console.log("Initializing explore page...");
   
+  // Check for category parameter in URL before loading categories
+  applyInitialCategoryFilter();
+  
   await loadCategories();
   await loadTags();
   await loadSources();
   
   setupSearch();
   setupClearButton();
-  setupSort();
-  setupExport();
   setupPerPage();
   setupDateFilters();
+  setupSortDropdown();
   
   await loadArticles();
   

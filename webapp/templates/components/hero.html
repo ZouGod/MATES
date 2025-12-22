@@ -24,13 +24,8 @@
 
         <!-- Dropdown Menu -->
         <div id="dropdown" class="z-10 hidden bg-white border border-gray-300 rounded-xl shadow-lg w-48 text-gray-800">
-          <ul class="p-2 text-base font-medium" aria-labelledby="dropdown-button">
-            <li><a href="#" class="block p-2 rounded-md hover:bg-gray-100">All Khmer Corpora</a></li>
-            <li><a href="#" class="block p-2 rounded-md hover:bg-gray-100">Modern Khmer Corpus</a></li>
-            <li><a href="#" class="block p-2 rounded-md hover:bg-gray-100">Historical Khmer Texts</a></li>
-            <li><a href="#" class="block p-2 rounded-md hover:bg-gray-100">Khmer News Corpus</a></li>
-            <li><a href="#" class="block p-2 rounded-md hover:bg-gray-100">Khmer Literature</a></li>
-            <li><a href="#" class="block p-2 rounded-md hover:bg-gray-100">Spoken Khmer</a></li>
+          <ul id="dropdown-menu" class="p-2 text-base font-medium" aria-labelledby="dropdown-button">
+            <li><a href="#" class="block p-2 rounded-md hover:bg-gray-100">Loading categories...</a></li>
           </ul>
         </div>
 
@@ -46,6 +41,7 @@
         <!-- Search Button -->
         <button
           type="button"
+          id="search-button"
           class="inline-flex items-center text-white bg-blue-600 hover:bg-blue-700 border border-transparent focus:ring-4 focus:ring-blue-300 font-medium text-base px-6 py-4 rounded-e-xl focus:outline-none"
         >
           <svg class="w-5 h-5 mr-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="m21 21-3.5-3.5M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"/></svg>
@@ -63,3 +59,47 @@
   </div>
 </section>
 <script src="{{ url_for('static', filename='js/index.js') }}"></script>
+<script>
+  // Dropdown toggle
+  document.getElementById('dropdown-button')?.addEventListener('click', () => {
+    const dropdown = document.getElementById('dropdown');
+    if (dropdown) {
+      dropdown.classList.toggle('hidden');
+    }
+  });
+
+  // Close dropdown when clicking outside
+  document.addEventListener('click', (e) => {
+    const dropdown = document.getElementById('dropdown');
+    const dropdownButton = document.getElementById('dropdown-button');
+    if (dropdown && !dropdown.contains(e.target) && e.target !== dropdownButton) {
+      dropdown.classList.add('hidden');
+    }
+  });
+
+  // Search button handler
+  document.getElementById('search-button')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    const searchInput = document.getElementById('search-dropdown');
+    if (searchInput && window.searchCategories) {
+      const searchValue = searchInput.value.trim();
+      window.searchCategories(searchValue);
+      
+      // Scroll to cards section
+      const cardsSection = document.getElementById('corpora-container');
+      if (cardsSection) {
+        setTimeout(() => {
+          cardsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 100);
+      }
+    }
+  });
+
+  // Allow Enter key to search
+  document.getElementById('search-dropdown')?.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      document.getElementById('search-button')?.click();
+    }
+  });
+</script>

@@ -28,7 +28,7 @@ async function loadStats() {
         <span class="font-bold">${formatNumber(stats.total_words)}</span> Khmer Words
       </div>
       <div class="bg-white/20 backdrop-blur-sm px-6 py-3 rounded-full">
-        <span class="font-bold">${stats.total_articles}</span> Articles
+        <span class="font-bold">${formatNumber(stats.total_articles)}</span> Articles
       </div>
       <div class="bg-white/20 backdrop-blur-sm px-6 py-3 rounded-full">
         <span class="font-bold">${stats.total_categories}</span> Categories
