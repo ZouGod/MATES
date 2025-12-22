@@ -3,6 +3,10 @@
  * Shows word count and article statistics like corpus
  */
 
+// Global state
+let allCategoriesData = [];
+const CATEGORIES_TO_SHOW_INITIALLY = 6;
+
 // Helper function to format word counts
 function formatWords(count) {
   if (count >= 1000000) return (count / 1000000).toFixed(1) + 'M words';
@@ -40,14 +44,65 @@ async function loadCategories() {
       return;
     }
     
-    // Limit to 3 categories and fetch their stats
-    const limitedCategories = categories.slice(0, 3);
-    await renderCategories(limitedCategories);
+    // Store all categories globally for searching
+    allCategoriesData = categories;
+    
+    // Populate dropdown menu with categories
+    populateDropdownMenu(categories);
+    
+    // Display initial set (6 categories)
+    const initialCategories = categories.slice(0, CATEGORIES_TO_SHOW_INITIALLY);
+    await renderCategories(initialCategories);
     
   } catch (error) {
     console.error('Error loading categories:', error);
     showError(error.message);
   }
+}
+
+// Populate dropdown menu with real category data
+function populateDropdownMenu(categories) {
+  const dropdownMenu = document.getElementById('dropdown-menu');
+  
+  if (!dropdownMenu) return;
+  
+  dropdownMenu.innerHTML = '';
+  
+  categories.forEach(cat => {
+    const li = document.createElement('li');
+    const a = document.createElement('a');
+    a.href = '#';
+    a.className = 'block p-2 rounded-md hover:bg-gray-100';
+    a.textContent = cat.category_name;
+    
+    a.addEventListener('click', (e) => {
+      e.preventDefault();
+      // Set search input value
+      const searchInput = document.getElementById('search-dropdown');
+      if (searchInput) {
+        searchInput.value = cat.category_name;
+      }
+      // Close dropdown
+      const dropdown = document.getElementById('dropdown');
+      if (dropdown) {
+        dropdown.classList.add('hidden');
+      }
+      // Trigger search
+      if (window.searchCategories) {
+        window.searchCategories(cat.category_name);
+        // Scroll to results
+        setTimeout(() => {
+          const cardsSection = document.getElementById('corpora-container');
+          if (cardsSection) {
+            cardsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }, 100);
+      }
+    });
+    
+    li.appendChild(a);
+    dropdownMenu.appendChild(li);
+  });
 }
 
 // Get article count, word count, and date range for a category
@@ -150,8 +205,8 @@ async function renderCategories(categories) {
           <span><i class="fas fa-file-word mr-1"></i> ${formatWords(stats.word_count)}</span>
         </div>
         
-        <div class="text-xs text-gray-500 mb-4">
-          <i class="fas fa-file-alt mr-1"></i> ${stats.article_count} articles
+        <div class="text-sm text-gray-500 mb-4">
+          <i class="fas fa-file-alt mr-1"></i> ${formatWords(stats.article_count)} articles
         </div>
         
         <button class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition" onclick="exploreCategory(${category.category_id}, '${category.category_name}')">
@@ -193,8 +248,41 @@ function showNoData() {
   }
 }
 
+// Search categories by name
+async function searchCategories(searchTerm) {
+  if (!searchTerm || searchTerm.trim() === '') {
+    // If search is empty, show initial 6 categories
+    const initialCategories = allCategoriesData.slice(0, CATEGORIES_TO_SHOW_INITIALLY);
+    await renderCategories(initialCategories);
+    return;
+  }
+
+  // Filter categories by search term (case-insensitive)
+  const searchLower = searchTerm.toLowerCase();
+  const filteredCategories = allCategoriesData.filter(cat =>
+    cat.category_name.toLowerCase().includes(searchLower)
+  );
+
+  if (filteredCategories.length === 0) {
+    const container = document.getElementById('corpora-container');
+    if (container) {
+      container.innerHTML = `
+        <div class="col-span-full text-center py-12">
+          <p class="text-gray-500">No categories found matching "${searchTerm}"</p>
+        </div>
+      `;
+    }
+    return;
+  }
+
+  // Render all matching categories (no limit when searching)
+  await renderCategories(filteredCategories);
+}
+
 // Load categories when page loads
-document.addEventListener('DOMContentLoaded', loadCategories);
+document.addEventListener('DOMContentLoaded', () => {
+  loadCategories();
+});
 
 //  <span class="${badgeColor} text-xs font-medium px-2.5 py-0.5 rounded-full">
 //             ${badgeType}
