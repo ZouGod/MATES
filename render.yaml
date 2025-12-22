@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: mates
+    env: python
+    region: singapore
+    plan: standard
+    buildCommand: pip install --upgrade pip && pip install -r requirements.txt
+    startCommand: gunicorn -w 4 -b 0.0.0.0:$PORT run:app
+    healthCheckPath: /api/categories
+    envVars:
+      - key: DATABASE_URL
+        scope: pull_request
+        value: ${DATABASE_URL}
+      - key: FLASK_ENV
+        value: production
+      - key: PORT
+        value: 5000

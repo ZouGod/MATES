@@ -3,6 +3,13 @@
 .env.local
 .env.*.local
 
+# Credentials
+credentials.json
+secrets.json
+
+# Jupyter notebooks with credentials
+webapp/notebook/*.ipynb_checkpoints/
+
 # Python
 __pycache__/
 *.py[cod]
