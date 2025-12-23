@@ -416,13 +416,24 @@ function renderCategoryList() {
     return;
   }
 
-  // Filter if searching
+  // Filter based on search
   let categoriesToDisplay = allCategories;
+  let isSearching = false;
+  
   if (searchInput && searchInput.value.trim()) {
+    isSearching = true;
     const searchTerm = searchInput.value.toLowerCase();
     categoriesToDisplay = allCategories.filter(cat => 
       cat.category_name.toLowerCase().includes(searchTerm)
     );
+    // Reset showAll flag when searching
+    showAllCategories = false;
+  }
+
+  // If searching and no results found
+  if (isSearching && categoriesToDisplay.length === 0) {
+    list.innerHTML = `<p class="text-gray-400 text-sm">No categories found matching "${searchInput.value}"</p>`;
+    return;
   }
 
   // Sort categories: checked ones first, then unchecked
@@ -466,8 +477,8 @@ function renderCategoryList() {
     list.appendChild(label);
   });
 
-  // Show "Show All" or "Show Less" button if needed
-  if (categoriesToDisplay.length > CATEGORIES_TO_SHOW_INITIALLY && (!searchInput || !searchInput.value.trim())) {
+  // Show "Show All" or "Show Less" button if needed (only when NOT searching)
+  if (!isSearching && categoriesToDisplay.length > CATEGORIES_TO_SHOW_INITIALLY) {
     const buttonContainer = document.createElement("div");
     buttonContainer.className = "mt-2";
     
@@ -697,11 +708,22 @@ function renderSourceList() {
 
   // Filter if searching
   let sourcesToDisplay = allSources;
+  let isSourceSearching = false;
+  
   if (searchInput && searchInput.value.trim()) {
+    isSourceSearching = true;
     const searchTerm = searchInput.value.toLowerCase();
     sourcesToDisplay = allSources.filter(source => 
       source.source_name.toLowerCase().includes(searchTerm)
     );
+    // Reset showAll flag when searching
+    showAllSources = false;
+  }
+
+  // If searching and no results found
+  if (isSourceSearching && sourcesToDisplay.length === 0) {
+    list.innerHTML = `<p class="text-gray-400 text-sm">No sources found matching "${searchInput.value}"</p>`;
+    return;
   }
 
   // Sort sources: checked ones first, then alphabetical
@@ -744,8 +766,8 @@ function renderSourceList() {
     list.appendChild(label);
   });
 
-  // Show "Show All" or "Show Less" button if needed
-  if (sourcesToDisplay.length > SOURCES_TO_SHOW_INITIALLY && (!searchInput || !searchInput.value.trim())) {
+  // Show "Show All" or "Show Less" button if needed (only when NOT searching)
+  if (!isSourceSearching && sourcesToDisplay.length > SOURCES_TO_SHOW_INITIALLY) {
     const buttonContainer = document.createElement("div");
     buttonContainer.className = "mt-2";
     
@@ -866,6 +888,8 @@ function setupClearButton() {
     const sortLabel = el("#sort-label");
     if (sortLabel) sortLabel.textContent = "Most Recent";
 
+    // Clear the initial category from URL so it doesn't get re-checked
+    initialCategoryFromUrl = null;
     
     // Reset category show/hide state
     showAllCategories = false;
