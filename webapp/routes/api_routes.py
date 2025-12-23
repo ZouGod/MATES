@@ -168,69 +168,20 @@ def get_articles():
     elif sort == "oldest":
         query = query.order_by(Article.publication_date.asc().nulls_last())
 
-    # ---------- Aggregate stats BEFORE pagination ----------
-    # Create a separate query for aggregate stats using the same filters
-    aggregate_query = db.session.query(
-        func.coalesce(func.sum(Article.character_count), 0),
-        func.coalesce(func.sum(Article.word_count), 0)
-    )
+    # ---------- Get aggregate stats from already-filtered query ----------
+    # Count total and get sum directly from the filtered query
+    count_query = query.statement.alias()
     
-    # Apply the same filters as the main query
-    if category_param:
-        # Handle multiple categories for aggregate query
-        if ',' in category_param:
-            category_ids = [int(x) for x in category_param.split(",") if x.isdigit()]
-            if category_ids:
-                aggregate_query = aggregate_query.filter(Article.category_id.in_(category_ids))
-        else:
-            category = _int(category_param)
-            if category:
-                aggregate_query = aggregate_query.filter(Article.category_id == category)
+    # Calculate totals more efficiently
+    stats = db.session.query(
+        func.count(count_query.c.article_id),
+        func.coalesce(func.sum(count_query.c.character_count), 0),
+        func.coalesce(func.sum(count_query.c.word_count), 0)
+    ).from_statement(query.statement).first()
     
-    if source_param:
-        # Handle multiple sources for aggregate query
-        if ',' in source_param:
-            source_ids = [int(x) for x in source_param.split(",") if x.isdigit()]
-            if source_ids:
-                aggregate_query = aggregate_query.filter(Article.source_id.in_(source_ids))
-        else:
-            source = _int(source_param)
-            if source:
-                aggregate_query = aggregate_query.filter(Article.source_id == source)
-    
-    if start:
-        try:
-            from dateutil import parser
-            sd = parser.parse(start).date()
-            aggregate_query = aggregate_query.filter(Article.publication_date >= sd)
-        except Exception:
-            pass
-    
-    if end:
-        try:
-            from dateutil import parser
-            ed = parser.parse(end).date()
-            aggregate_query = aggregate_query.filter(Article.publication_date <= ed)
-        except Exception:
-            pass
-    
-    if q:
-        ilike_q = f"%{q}%"
-        aggregate_query = aggregate_query.filter(
-            or_(Article.title.ilike(ilike_q), Article.content.ilike(ilike_q))
-        )
-    
-    if tag_param:
-        tag_ids = [int(x) for x in tag_param.split(",") if x.isdigit()]
-        if tag_ids:
-            # For aggregate query with tags, we need a subquery
-            subquery = db.session.query(ArticleTag.article_id).filter(
-                ArticleTag.tag_id.in_(tag_ids)
-            ).distinct()
-            aggregate_query = aggregate_query.filter(Article.article_id.in_(subquery))
-
-    # Execute the aggregate query
-    total_chars, total_words = aggregate_query.first()
+    total_count = stats[0] if stats else 0
+    total_chars = stats[1] if stats else 0
+    total_words = stats[2] if stats else 0
 
     # ---------- Pagination ----------
     pag = query.paginate(page=page, per_page=per_page, error_out=False)
@@ -253,7 +204,6 @@ def get_articles():
                 "source_id": a.source.source_id,
                 "source_name": a.source.source_name
             } if a.source else None,
-            # Use the stored character_count instead of calculating it
             "character_count": a.character_count or 0,
             "word_count": a.word_count or 0,
             "sentence_count": a.sentence_count or 0
@@ -263,9 +213,9 @@ def get_articles():
     return jsonify({
         "page": page,
         "per_page": per_page,
-        "total": pag.total,
-        "pages": pag.pages,
-        "total_characters": total_chars or 0,
-        "total_words": total_words or 0,
+        "total": total_count,
+        "pages": (total_count + per_page - 1) // per_page,
+        "total_characters": int(total_chars) if total_chars else 0,
+        "total_words": int(total_words) if total_words else 0,
         "articles": items
     })
