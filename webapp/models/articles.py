@@ -45,10 +45,10 @@ class Article(db.Model):
     category_confidence = db.Column(db.Numeric(3, 2), default=0.0)
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp(), index=True)
 
-    # Relationships - use lazy="select" to avoid N+1 query issues
+    # Relationships - use joined loading for efficient API responses
     source = db.relationship("Source", lazy="joined")
     category = db.relationship("Category", lazy="joined")
-    tags = db.relationship("Tag", secondary="article_tags", backref="articles", lazy="select")
+    tags = db.relationship("Tag", secondary="article_tags", backref="articles", lazy="selectin")
     
     __table_args__ = (
         db.Index('idx_articles_category_pub_date', 'category_id', 'publication_date'),

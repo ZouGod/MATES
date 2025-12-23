@@ -33,6 +33,18 @@ function applyInitialCategoryFilter() {
   if (categoryParam) {
     initialCategoryFromUrl = categoryParam;
     console.log("Found category parameter in URL:", initialCategoryFromUrl);
+    
+    // First, uncheck ALL categories
+    els("#category-list input").forEach(cb => cb.checked = false);
+    
+    // Then check only the one from homepage
+    const checkbox = el(`#category-list input[value="${categoryParam}"]`);
+    if (checkbox) {
+      checkbox.checked = true;
+    }
+    
+    // Clean the URL - remove query parameter from address bar
+    window.history.replaceState({}, document.title, "/explore");
   }
 }
 
@@ -41,7 +53,7 @@ function applyInitialCategoryFilter() {
 ====================================================== */
 let currentPage = 1;
 let currentSort = "newest";
-let currentPerPage = 20;
+let currentPerPage = 10;  // Reduced from 20 for faster initial load
 let lastApiResponse = null;
 let allCategories = [];
 let showAllCategories = false;
@@ -245,13 +257,39 @@ async function exportData(format = "json") {
   try {
     console.log("Starting export in format:", format);
     
-    // Fetch ALL filtered articles (not paginated)
-    const params = collectFilters();
-    // Override pagination to get all results
-    params.set("page", 1);
-    params.set("per_page", 100000); // Get all articles
+    // Build params from current filter selections only (no pagination)
+    const params = new URLSearchParams();
+
+    // Get all checked categories
+    const cats = els("#category-list input:checked").map(cb => cb.value).filter(v => v);
+    if (cats.length > 0) {
+      params.append("category", cats.join(","));
+    }
+
+    // Get all checked tags
+    const tags = els("#tag-list input:checked").map(cb => cb.value).filter(v => v);
+    if (tags.length > 0) {
+      params.append("tag", tags.join(","));
+    }
+
+    // Get all checked sources
+    const sources = els("#source-list input:checked").map(cb => cb.value).filter(v => v);
+    if (sources.length > 0) {
+      params.append("source", sources.join(","));
+    }
+
+    const startDate = el("#start-date")?.value;
+    const endDate = el("#end-date")?.value;
+    if (startDate) params.append("start", startDate);
+    if (endDate) params.append("end", endDate);
+
+    // Get search query if any
+    const searchInput = el("#search-query");
+    if (searchInput && searchInput.value) {
+      params.append("q", searchInput.value);
+    }
     
-    const url = `/api/articles?${params.toString()}`;
+    const url = `/api/articles/export?${params.toString()}`;
     console.log("Exporting from URL:", url);
     
     const data = await fetchJSON(url);
@@ -277,6 +315,10 @@ async function exportData(format = "json") {
     } else {
       alert("Unknown export format");
     }
+    
+    // Reload articles with current filters to ensure stats stay correct
+    await loadArticles();
+    
   } catch (error) {
     console.error("Export error:", error);
     alert("Error during export: " + error.message);
@@ -307,9 +349,9 @@ function exportCSV(articles) {
     const headers = ["Title", "Content", "Category", "Source", "URL", "Publication Date", "Word Count", "Character Count"];
     const rows = articles.map(a => [
       `"${(a.title || "").replace(/"/g, '""')}"`,
-      `"${(a.content || "").replace(/"/g, '""').substring(0, 100)}"`,
-      `"${a.category?.category_name || ""}"`,
-      `"${a.source?.source_name || ""}"`,
+      `"${(a.content || "").replace(/"/g, '""')}"`,
+      `"${a.category_name || ""}"`,
+      `"${a.source_name || ""}"`,
       `"${a.url || ""}"`,
       a.publication_date || "",
       a.word_count || 0,
