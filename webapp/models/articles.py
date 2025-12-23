@@ -33,22 +33,27 @@ class Article(db.Model):
     __tablename__ = "articles"
     article_id = db.Column(db.Integer, primary_key=True)
     url = db.Column(db.String(1000), unique=True, nullable=False)
-    source_id = db.Column(db.Integer, db.ForeignKey("sources.source_id"), nullable=False)
-    publication_date = db.Column(db.Date)
+    source_id = db.Column(db.Integer, db.ForeignKey("sources.source_id"), nullable=False, index=True)
+    publication_date = db.Column(db.Date, index=True)
     scrape_date = db.Column(db.DateTime)
     title = db.Column(db.Text, nullable=False)
     content = db.Column(db.Text)
     word_count = db.Column(db.Integer, default=0)
     sentence_count = db.Column(db.Integer, default=0)
     character_count = db.Column(db.Integer, default=0)
-    category_id = db.Column(db.Integer, db.ForeignKey("categories.category_id"))
+    category_id = db.Column(db.Integer, db.ForeignKey("categories.category_id"), index=True)
     category_confidence = db.Column(db.Numeric(3, 2), default=0.0)
-    created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
+    created_at = db.Column(db.DateTime, default=db.func.current_timestamp(), index=True)
 
-    # Relationships
+    # Relationships - use joined loading for efficient API responses
     source = db.relationship("Source", lazy="joined")
     category = db.relationship("Category", lazy="joined")
-    tags = db.relationship("Tag", secondary="article_tags", backref="articles", lazy="select")
+    tags = db.relationship("Tag", secondary="article_tags", backref="articles", lazy="selectin")
+    
+    __table_args__ = (
+        db.Index('idx_articles_category_pub_date', 'category_id', 'publication_date'),
+        db.Index('idx_articles_source_pub_date', 'source_id', 'publication_date'),
+    )
 
     def to_dict(self, preview_len=160):
         return {

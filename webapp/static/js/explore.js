@@ -33,6 +33,18 @@ function applyInitialCategoryFilter() {
   if (categoryParam) {
     initialCategoryFromUrl = categoryParam;
     console.log("Found category parameter in URL:", initialCategoryFromUrl);
+    
+    // First, uncheck ALL categories
+    els("#category-list input").forEach(cb => cb.checked = false);
+    
+    // Then check only the one from homepage
+    const checkbox = el(`#category-list input[value="${categoryParam}"]`);
+    if (checkbox) {
+      checkbox.checked = true;
+    }
+    
+    // Clean the URL - remove query parameter from address bar
+    window.history.replaceState({}, document.title, "/explore");
   }
 }
 
@@ -41,7 +53,7 @@ function applyInitialCategoryFilter() {
 ====================================================== */
 let currentPage = 1;
 let currentSort = "newest";
-let currentPerPage = 20;
+let currentPerPage = 10;  // Reduced from 20 for faster initial load
 let lastApiResponse = null;
 let allCategories = [];
 let showAllCategories = false;
@@ -85,6 +97,12 @@ function collectFilters() {
   const endDate = el("#end-date")?.value;
   if (startDate) params.append("start", startDate);
   if (endDate) params.append("end", endDate);
+
+  // Get search query if any
+  const searchInput = el("#search-query");
+  if (searchInput && searchInput.value) {
+    params.append("q", searchInput.value);
+  }
 
   params.append("page", currentPage);
   params.append("per_page", currentPerPage);
@@ -235,51 +253,126 @@ async function loadArticles() {
 /* ======================================================
    EXPORT FILTERED DATA
 ====================================================== */
-function exportData(format = "json") {
-  if (!lastApiResponse || !lastApiResponse.articles) {
-    alert("No articles to export");
-    return;
-  }
+async function exportData(format = "json") {
+  try {
+    console.log("Starting export in format:", format);
+    
+    // Build params from current filter selections only (no pagination)
+    const params = new URLSearchParams();
 
-  const articles = lastApiResponse.articles;
+    // Get all checked categories
+    const cats = els("#category-list input:checked").map(cb => cb.value).filter(v => v);
+    if (cats.length > 0) {
+      params.append("category", cats.join(","));
+    }
 
-  if (format === "json") {
-    exportJSON(articles);
-  } else if (format === "csv") {
-    exportCSV(articles);
+    // Get all checked tags
+    const tags = els("#tag-list input:checked").map(cb => cb.value).filter(v => v);
+    if (tags.length > 0) {
+      params.append("tag", tags.join(","));
+    }
+
+    // Get all checked sources
+    const sources = els("#source-list input:checked").map(cb => cb.value).filter(v => v);
+    if (sources.length > 0) {
+      params.append("source", sources.join(","));
+    }
+
+    const startDate = el("#start-date")?.value;
+    const endDate = el("#end-date")?.value;
+    if (startDate) params.append("start", startDate);
+    if (endDate) params.append("end", endDate);
+
+    // Get search query if any
+    const searchInput = el("#search-query");
+    if (searchInput && searchInput.value) {
+      params.append("q", searchInput.value);
+    }
+    
+    const url = `/api/articles/export?${params.toString()}`;
+    console.log("Exporting from URL:", url);
+    
+    const data = await fetchJSON(url);
+    
+    if (!data) {
+      console.error("No data returned from API");
+      alert("Failed to fetch articles");
+      return;
+    }
+
+    if (!data.articles || data.articles.length === 0) {
+      alert("No articles to export");
+      return;
+    }
+
+    const articles = data.articles;
+    console.log("Successfully fetched", articles.length, "articles");
+
+    if (format === "json") {
+      exportJSON(articles);
+    } else if (format === "csv") {
+      exportCSV(articles);
+    } else {
+      alert("Unknown export format");
+    }
+    
+    // Reload articles with current filters to ensure stats stay correct
+    await loadArticles();
+    
+  } catch (error) {
+    console.error("Export error:", error);
+    alert("Error during export: " + error.message);
   }
 }
 
 function exportJSON(articles) {
-  const data = JSON.stringify(articles, null, 2);
-  const blob = new Blob([data], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = `articles_${new Date().toISOString().split("T")[0]}.json`;
-  a.click();
-  URL.revokeObjectURL(url);
+  try {
+    const data = JSON.stringify(articles, null, 2);
+    const blob = new Blob([data], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `articles_${new Date().toISOString().split("T")[0]}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    // alert(`Successfully exported ${articles.length} articles as JSON`);
+  } catch (error) {
+    console.error("JSON export error:", error);
+    // alert("Error exporting JSON");
+  }
 }
 
 function exportCSV(articles) {
-  const headers = ["Title", "Content", "Category", "Source", "URL", "Publication Date"];
-  const rows = articles.map(a => [
-    `"${(a.title || "").replace(/"/g, '""')}"`,
-    `"${(a.content || "").replace(/"/g, '""').substring(0, 100)}"`,
-    `"${a.category?.category_name || ""}"`,
-    `"${a.source?.source_name || ""}"`,
-    `"${a.url || ""}"`,
-    a.publication_date || ""
-  ]);
+  try {
+    const headers = ["Title", "Content", "Category", "Source", "URL", "Publication Date", "Word Count", "Character Count"];
+    const rows = articles.map(a => [
+      `"${(a.title || "").replace(/"/g, '""')}"`,
+      `"${(a.content || "").replace(/"/g, '""')}"`,
+      `"${a.category_name || ""}"`,
+      `"${a.source_name || ""}"`,
+      `"${a.url || ""}"`,
+      a.publication_date || "",
+      a.word_count || 0,
+      a.character_count || 0
+    ]);
 
-  const csv = [headers.join(","), ...rows.map(r => r.join(","))].join("\n");
-  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = `articles_${new Date().toISOString().split("T")[0]}.csv`;
-  a.click();
-  URL.revokeObjectURL(url);
+    const csv = [headers.join(","), ...rows.map(r => r.join(","))].join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `articles_${new Date().toISOString().split("T")[0]}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    // alert(`Successfully exported ${articles.length} articles as CSV`);
+  } catch (error) {
+    console.error("CSV export error:", error);
+    // alert("Error exporting CSV");
+  }
 }
 
 /* ======================================================
@@ -900,12 +993,12 @@ function setupSortDropdown() {
   // Handle export options
   if (exportDropdown) {
     exportDropdown.querySelectorAll("button[data-export]").forEach(btn => {
-      btn.addEventListener("click", function(e) {
+      btn.addEventListener("click", async function(e) {
         e.preventDefault();
         e.stopPropagation();
         
         const type = this.dataset.export;
-        exportData(type === "excel" ? "csv" : type);
+        await exportData(type);
         exportDropdown.classList.add("hidden");
       });
     });
